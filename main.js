@@ -52,8 +52,12 @@ function createWindow () {
       nodeIntegration: true
     }
   })
-  if(isDev)
-    mainWindow.loadFile(path.join(__dirname,"index.html"));
+  
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
 }
 app.whenReady().then(createWindow)
 
