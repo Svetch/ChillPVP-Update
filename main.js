@@ -1,27 +1,60 @@
-// Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain, globalShortcut, protocol} = require('electron');
+const {autoUpdater} = require('electron-updater');
+const isDev = require('electron-is-dev');
+const path = require('path');
+const url = require("url");
+
+autoUpdater.logger = require("electron-log")
+autoUpdater.logger.transports.file.level = "info"
+
+function initAutoUpdater(event, data) {
+  autoUpdater.on('update-available', (info) => {
+      event.sender.send('update-notofication','update-available')
+  })
+  autoUpdater.on('update-downloaded', (info) => {
+      event.sender.send('update-notofication','update-downloaded')
+      setTimeout(() => autoUpdater.quitAndInstall(),5000);
+  })
+  autoUpdater.on('update-not-available', (info) => {
+      event.sender.send('update-notofication','update-not-available')
+  })
+  autoUpdater.on('checking-for-update', () => {
+      event.sender.send('update-notofication','checking-for-update')
+  })
+  autoUpdater.on('error', (error) => {
+      event.sender.send('update-notofication','update-error', error);
+      app.quit();
+  }) 
+  autoUpdater.on('download-progress', (progressObj) => {
+    event.sender.send('update-notofication','download-progress', progressObj)
+  })
+}
+
+ipcMain.on('ready-to-update', (event, arg, data) => {
+  if(!isDev)
+  {
+    autoUpdater.checkForUpdates();
+    initAutoUpdater(event, data);
+  }
+  else
+    event.sender.send('update-notofication','update-not-available');
+})
 
 function createWindow () {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
+    icon: __dirname + "./assets/icon.ico",
+    width: 1000,
     height: 600,
+    minWidth: 1000,
+    minHeight:600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      nodeIntegration: true
     }
   })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  if(isDev)
+    mainWindow.loadFile(path.join(__dirname,"index.html"));
 }
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(createWindow)
 
 // Quit when all windows are closed.

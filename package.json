@@ -1,10 +1,14 @@
 {
   "name": "chillpvp-updater",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "cross-env ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true node build.js",
+    "dist:win": "npm run dist -- WINDOWS",
+    "dist:mac": "npm run dist -- MAC",
+    "dist:linux": "npm run dist -- LINUX"
   },
   "keywords": [
     "Electron",
@@ -13,9 +17,24 @@
     "tutorial",
     "demo"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Svetch/ChillPVP-Update.git"
+  },
   "author": "Svetch",
-  "license": "CC0-1.0",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Svetch/ChillPVP-Update/issues"
+  },
+  "homepage": "https://github.com/Svetch/ChillPVP-Update#readme",
   "devDependencies": {
-    "electron": "^8.2.5"
+    "cross-env": "^7.0.2",
+    "electron": "^8.2.5",
+    "electron-builder": "^22.6.0"
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.1.2",
+    "electron-updater": "^4.3.1"
   }
 }
