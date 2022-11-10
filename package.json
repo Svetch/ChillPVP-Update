@@ -29,7 +29,7 @@
   "homepage": "https://github.com/Svetch/ChillPVP-Update#readme",
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "electron": "^8.2.5",
+    "electron": "^18.3.7",
     "electron-builder": "^22.6.0"
   },
   "dependencies": {
